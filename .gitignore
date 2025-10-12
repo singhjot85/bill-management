@@ -1,2 +1,60 @@
 *.env
 *.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# VSCode
+.vscode/
+.history/
+*.code-workspace
+
+# Environment & secrets
+.env
+*.env
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Coverage / testing
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Migrations (optional — if auto-generated)
+# Uncomment this if you want to ignore migrations
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# OS-specific
+.DS_Store
+Thumbs.db

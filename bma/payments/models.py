@@ -14,9 +14,9 @@ class Order(BaseModel):
     )
     
     PAYMENT_STATES_CHOICES = (
-        ("created", "Created")
-        ("authorized", "Authorized")
-        ("failed", "Authorized but Failed")
+        ("created", "Created"),
+        ("authorized", "Authorized"),
+        ("failed", "Authorized but Failed"),
         ("captured", "Captured")
     )
 
