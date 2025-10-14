@@ -1,27 +1,40 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
-from bma.payments.models import Payment
+from bma.payments.models import Order, Payment
 
 
-class PaymentSerializer(ModelSerializer):
-
+class OrderSerializer(serializers.ModelSerializer):
+    # response = serializers.SerializerMethodField(write_only=True)
+    first_payment_min_amount = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
 
     class Meta:
-        model = Payment
+        model = Order
         fields = [
-            "id",
             "amount",
-            "description",
-            "requested_by"
+            "currency",
+            "notes",
+            "partial_payment",
+            "first_payment_min_amount"
         ]
+        read_only_fields = [
+            "amount",
+            "currency",
+            "notes",
+            "partial_payment",
+            "first_payment_min_amount"
+        ]
+    
+    def get_first_payment_min_amount(self, obj):
+        # TODO
+        return None
+    
+    def get_amount(self, obj):
+        return int(obj.amount)
 
-"""
-payment = Payment.objects.first()
-serializer = PaymentSerializer(payment)
-serializer.data ={
-        "id": ,
-        "amount": ,
-        "description": ,
-        "requested_by": 56789-98765
-    }
-"""
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = "__all__"
+

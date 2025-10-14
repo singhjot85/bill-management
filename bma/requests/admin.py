@@ -58,9 +58,9 @@ def download_pdf(modeladmin, request, queryset):
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
-    list_display = ("name", "category", "amount")
-    list_filter = ["category"]
-    search_fields = ("name", "category", 'amount')
+    list_display = ("name", "state", "total_amount")
+    list_filter = ["state", "currency"]
+    search_fields = ("name", "state", 'total_amount')
     actions = [
         download_pdf,
         # download_pdf_zip

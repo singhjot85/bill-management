@@ -1,7 +1,10 @@
+import uuid
 from io import BytesIO
 
 from django.template.loader import render_to_string
 from weasyprint import HTML
+from model_utils.models import UUIDModel, TimeStampedModel, SoftDeletableModel
+
 
 """
 brew install cairo pango gdk-pixbuf libffi
@@ -19,3 +22,10 @@ def render_to_pdf(template: str, data: dict) -> BytesIO:
     HTML(string=complete_template).write_pdf(pdf_file)
 
     return pdf_file
+
+def generate_random_uuid():
+    return uuid.uuid5(uuid.NAMESPACE_DNS, str(uuid.uuid4()))
+
+class BaseModel(UUIDModel, TimeStampedModel, SoftDeletableModel):
+    class Meta:
+        abstract = True

@@ -1,30 +1,60 @@
-import uuid
+from bma.base.utils import generate_random_uuid, BaseModel
 
-from bma.base.models import BaseModel
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.functional import cached_property
 
-def generate_bill_number():
-    return uuid.uuid5(uuid.NAMESPACE_DNS, str(uuid.uuid4()))
+
+
+def upload_file_path():
+    return r'media/invoices'
+
+class BillPayment(BaseModel):
+    """
+    TODO: Support for multiple payment's
+    """
+    pass
 
 class Bill(BaseModel):
 
-    CATEGORY_CHOICES = (
-        ("1", "Category 1"),
-        ("2", "Category 2")
+    PAID = 'paid'
+    UNPAID = 'unpaid'
+    PAID_IN_CASH = 'paid-in-cash'
+    PAYMENT_UNDER_PROCESS = 'payment-under-process'
+
+    STATE_CHOICES = (
+        (PAID, 'Paid Bill'),
+        (UNPAID, 'Unpaid Bill'),
+        (PAID_IN_CASH,'Bill Paid in cash'),
+        (PAYMENT_UNDER_PROCESS, 'Payment under processing')
     )
+
+    INR = "INR"
+    USD = "USD"
+
+    CURRENCY_CHOICES = (
+        (INR, "Indian Rupee"),
+        (USD, "US Dollar")
+    )
+
     number = models.UUIDField(
-        default= generate_bill_number,
+        default= generate_random_uuid,
         editable=False,
         primary_key=False,
         unique=True
     )
 
     name = models.CharField("Bill Name", blank=True)
-    category = models.CharField("Category", max_length=255, default=CATEGORY_CHOICES[0], choices=CATEGORY_CHOICES)
-    amount = models.DecimalField("Bill Amount", decimal_places=2, max_digits=13)
-    description = models.TextField("Bill Description", null=True, blank=True)
-    razorpay_id = models.CharField("Payment Id", default=None, null=True, blank=True)
+    state = models.CharField("Category", max_length=255, default=UNPAID, choices=STATE_CHOICES)
+
+    customer = models.ForeignKey(verbose_name="Bill Payee", to=User, on_delete=models.CASCADE, null=True, blank=True)
+    total_amount = models.DecimalField(verbose_name="Total Bill Amount", decimal_places=2, max_digits=13)
+    currency = models.CharField(verbose_name="Currency", default=INR, choices=CURRENCY_CHOICES)
+    description = models.TextField(verbose_name="Bill Description", null=True, blank=True)
+
+    is_partial_payment = models.BooleanField(verbose_name="Is the Amount paid partially", default=False)
+    payment = models.ForeignKey(verbose_name="Current Payment", to=BillPayment, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return f'{self.name}'
@@ -36,8 +66,14 @@ class Bill(BaseModel):
         verbose_name = "Bill"
         verbose_name_plural = "Bills"
 
-def upload_file_path():
-    return r'media/invoices'
+    @cached_property
+    def created_date(self):
+        return self.created.date()
+
+    @cached_property
+    def modified_date(self):
+        return self.modified.date()
+
 
 class Document(BaseModel):
     name = models.CharField("Document Name", blank=True)
