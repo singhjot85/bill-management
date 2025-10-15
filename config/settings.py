@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'bma.requests',
     'bma.payments',
-    'django_extensions'
+    'django_extensions',
+    'bma.baseapp'
 ]
 
 MIDDLEWARE = [

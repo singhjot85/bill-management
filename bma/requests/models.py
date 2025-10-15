@@ -1,7 +1,8 @@
-from bma.base.utils import generate_random_uuid, BaseModel
+from bma.baseapp.models import BaseModel, BaseUserModel
+
+from bma.base.utils import generate_random_uuid
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.functional import cached_property
 
@@ -9,12 +10,6 @@ from django.utils.functional import cached_property
 
 def upload_file_path():
     return r'media/invoices'
-
-class BillPayment(BaseModel):
-    """
-    TODO: Support for multiple payment's
-    """
-    pass
 
 class Bill(BaseModel):
 
@@ -48,13 +43,13 @@ class Bill(BaseModel):
     name = models.CharField("Bill Name", blank=True)
     state = models.CharField("Category", max_length=255, default=UNPAID, choices=STATE_CHOICES)
 
-    customer = models.ForeignKey(verbose_name="Bill Payee", to=User, on_delete=models.CASCADE, null=True, blank=True)
+    customer = models.ForeignKey(verbose_name="Bill Payee", to=BaseUserModel, on_delete=models.CASCADE, null=True, blank=True)
     total_amount = models.DecimalField(verbose_name="Total Bill Amount", decimal_places=2, max_digits=13)
     currency = models.CharField(verbose_name="Currency", default=INR, choices=CURRENCY_CHOICES)
     description = models.TextField(verbose_name="Bill Description", null=True, blank=True)
 
     is_partial_payment = models.BooleanField(verbose_name="Is the Amount paid partially", default=False)
-    payment = models.ForeignKey(verbose_name="Current Payment", to=BillPayment, on_delete=models.CASCADE, null=False)
+    # payment = models.ForeignKey(verbose_name="Current Payment", to=BillPayment, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return f'{self.name}'
