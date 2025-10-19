@@ -1,3 +1,4 @@
+import jq
 import uuid
 from io import BytesIO
 
@@ -31,3 +32,23 @@ def phone_number_validator(number: str):
         raise ValidationError("Phone number must have exactly 10 digits.")
     if not cleaned_number.isdigit():
         raise ValidationError("Phone number must contain only digits.")
+
+def jq_transform_payload(input_payload: dict, jq_path: str):
+    try:
+        with open(jq_path, 'r') as f:
+            jq_program = f.read()
+        output_payload = jq.compile(jq_program).input(input_payload).first()
+    except Exception as exc:
+        return str(f"Error in jq tranformation [{str(exc)}]")
+
+    return output_payload
+
+def jq_transform_with_config(input_payload: dict, config: dict, jq_path: str):
+    try:
+        with open(jq_path, 'r') as f:
+            jq_program = f.read()    
+        output_payload = jq.compile(jq_program, config).input(input_payload).first()
+    except Exception as exc:
+        return str(f"Error in jq tranformation [{str(exc)}]")
+
+    return output_payload

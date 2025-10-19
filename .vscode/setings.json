@@ -6,6 +6,6 @@
         "**/migrations": true,
         "**/.DS_Store": true
     },
-    "python.defaultInterpreterPath": "/Users/gurjot.singh/Library/Caches/pypoetry/virtualenvs",
+    "python.defaultInterpreterPath": "/Users/gurjot.singh/Library/Caches/pypoetry/virtualenvs/bma-gkgSF_N--py3.13/bin/python",
     "python.terminal.activateEnvironment": true
 }

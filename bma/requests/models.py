@@ -1,4 +1,4 @@
-from bma.baseapp.models import BaseModel, BaseUserModel
+from bma.core.models import BaseModel, BaseUserModel
 
 from bma.base.utils import generate_random_uuid
 

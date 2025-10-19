@@ -1,22 +1,36 @@
 from pathlib import Path
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv('DJANGO_SECRETE_KEY', 'django-insecure-6%)b%#j9+01(l6!ux)5t77b3t4zx=bidehk@y4x1ga*e6x0bn%')
+RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_SECRETE', 'rzp_test_RSVIW8D3txWcSx')
+RAZORPAY_API_SECRETE = os.getenv('RAZORPAY_API_SECRETE', 'aVja8X23PZ4NdiAV8pC0Jhlg')
+DEFAULT_AUTO_FIELD = os.getenv('DJANGO_DEFAULT_ID','django.db.models.BigAutoField')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6%)b%#j9+01(l6!ux)5t77b3t4zx=bidehk@y4x1ga*e6x0bn%'
+LOCAL_ENVS = ['local','dev','devlopment']
+if os.getenv('DJANGO_ENV', 'devlopment') in LOCAL_ENVS:
+    DEBUG = True
+    WSGI_APPLICATION = 'config.wsgi.application'
+else:
+    # TODO: Write WSGI configuration for production
+    DEBUG = False
+    WSGI_APPLICATION = ''
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+USE_TZ = True
+USE_I18N = True
+TIME_ZONE = 'UTC'
+STATIC_URL = 'static/'
+LANGUAGE_CODE = 'en-us'
+
 
 ALLOWED_HOSTS = []
+STATIC_URL = 'static/'
+ROOT_URLCONF = 'config.routers'
 
-# Application definition
-
+AUTH_USER_MODEL = "core.BaseUserModel"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,30 +38,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'bma.requests',
     'bma.payments',
-    'django_extensions',
-    'bma.baseapp'
+    'bma.core'
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
-ROOT_URLCONF = 'config.routers'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            'media/templates',
+            'bma/setup/templates',
+            'bma/setup/templates/bill_templates',
+            'bma/setup/templates/viewset_templates'
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -60,22 +73,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
 
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -91,32 +99,3 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-API_KEY = "rzp_test_RSVIW8D3txWcSx"
-API_SECRETE = "aVja8X23PZ4NdiAV8pC0Jhlg"
-
-# os.env.get("API_KEY", "")
-# os.env.get("API_SECRETE", "")
