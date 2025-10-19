@@ -248,20 +248,7 @@ class BaseUserModelAdmin(admin.ModelAdmin):
             "auto_populated_fields": (),
             "username_help_text": username_field.help_text,
         }
-        extra_context.update(defaults)
-        return super().add_view(request, form_url, extra_context)
-
-    def response_add(self, request, obj, post_url_continue=None):
-        """
-        Determine the HttpResponse for the add_view stage. It mostly defers to
-        its superclass implementation but is customized because the User model
-        has a slightly different workflow.
-        """
-        # We should allow further modification of the user just added i.e. the
-        # 'Save' button should behave like the 'Save and continue editing'
-        # button except in two scenarios:
-        # * The user has pressed the 'Save and add another' button
-        # * We are adding a user in a popup
+ er in a popup
         if "_addanother" not in request.POST and IS_POPUP_VAR not in request.POST:
             request.POST = request.POST.copy()
             request.POST["_continue"] = 1
