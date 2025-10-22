@@ -213,6 +213,8 @@
     </div>
 
     <script>
+        let currentMode = "{{ mode }}";
+
         async function fetchAuthForm(url) {
             try{
                 const response = await fetch(
@@ -223,14 +225,13 @@
                 );
                 if (!response.ok) throw new Error("Failed to load form");
 
-                console.log({response})
-
                 // Fetch form from html template
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = await response.text();;
                 const newForm = tempDiv.querySelector('form#auth-form');
                 if (!newForm) throw new Error("Form not found in response");
-
+                
+                // Replace current form with one from backend
                 document.getElementById('auth-form').replaceWith(newForm);
             } catch(err) {
                 console.error("Error updating form:", err);
@@ -241,18 +242,14 @@
             e.preventDefault();
             const formContainer = document.getElementById('auth-form').parentElement;
             
-            console.log({formContainer})
-            
-            const newMode = "{{ mode }}"==="login" ? "register": "login";
-            await fetchAuthForm(`?mode=${newMode}`);
-
-            console.log({newMode})
+            currentMode = (currentMode ==="login" ? "register": "login");
+            await fetchAuthForm(`?mode=${currentMode}`);
 
             const formTitle = document.getElementById('form-title');
             const pageTitle = document.getElementById('page-title');
             const innerToggleText = document.getElementById('inner-toggle-text');
             const submitButton = document.getElementById('submit-button');
-            if (newMode === "register") {
+            if (currentMode === "register") {
                 formTitle.textContent = "Register";
                 pageTitle.textContent = "Register";
                 submitButton.innerHTML = "Register";
@@ -263,10 +260,6 @@
                 submitButton.innerHTML = "Login";
                 innerToggleText.innerHTML = "Register";
             }
-            console.log({formTitle})
-            console.log({pageTitle})
-            console.log({innerToggleText})
-            console.log({submitButton})
         }
     </script>
 
