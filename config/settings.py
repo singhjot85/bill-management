@@ -53,15 +53,11 @@ DATABASES = {
     }
 }
 
-
+TEMPLATE_DIR = os.path.join(BASE_DIR, "assets", "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            'bma/setup/templates',
-            'bma/setup/templates/bill_templates',
-            'bma/setup/templates/viewset_templates'
-        ],
+        "DIRS": [TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -2,7 +2,7 @@ from bma.requests.views import BillViewSet
 
 from django.contrib import admin
 from django.conf import settings
-from django.urls import path
+from django.urls import path, include
 
 from rest_framework.routers import SimpleRouter, DefaultRouter
 
@@ -13,6 +13,7 @@ if settings.DEBUG:
 router.register(r'bill', BillViewSet, basename='bill')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),    
+    path("", include('bma.core.urls')),
+    path('admin/', admin.site.urls, name="admin"),    
 ]
 urlpatterns.extend(router.urls)
