@@ -1,5 +1,5 @@
 from bma.core.constants import APIRequestMethods as Method
-from bma.core.forms import BaseCustomerForm, CustomerForm
+from bma.core.forms import LoginForm, RegistrationForm
 from bma.core.models import BaseUserModel
 
 from django.contrib.auth import login, authenticate
@@ -8,22 +8,22 @@ from django.shortcuts import render, redirect
 
 AUTH_TEMPLATE = "viewset_templates/auth.html"
 ERROR_TEMPLATE = "viewset_templates/404.html"
-AUTH_REDIRECT = "admin"
+AUTH_REDIRECT = "/admin"
 
 def auth_view(request: HttpRequest, *args, **kwargs):
     err_msg = None
 
     if _is_authenticated(request):
-        return redirect(AUTH_REDIRECT)
+        return redirect(to=AUTH_REDIRECT, permanent=True, preserve_request=True)
     
     req_method = request.method.upper()
     
     if req_method == Method.GET.value:
-        form = BaseCustomerForm()
+        form = LoginForm()
         mode = "login"
 
         if request.GET.get("mode", None) == "register":
-            form = CustomerForm()
+            form = RegistrationForm()
             mode = "register"
 
         context={
@@ -34,18 +34,24 @@ def auth_view(request: HttpRequest, *args, **kwargs):
 
     if req_method == Method.POST.value:
         data = request.POST
-        username = data.get("username", None)
-        password = data.get("password", None)
 
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect(AUTH_REDIRECT)
-        
-        form = CustomerForm(request.POST)
-        if form.is_valid():
-            _create_user(data)
-            return redirect(AUTH_REDIRECT)
+        if data.get("mode") == "register":
+            if RegistrationForm(data).is_valid():
+                _create_user(data)
+                return redirect(AUTH_REDIRECT)
+
+            err_msg = "User Registration unsuccessful"
+
+        if data.get("mode") == "login":
+            username = data.get("username", None)
+            password = data.get("password", None)
+
+            user = authenticate(request, username=username, password=password)
+            if user:
+                login(request, user)
+                return redirect(to=AUTH_REDIRECT, permanent=True, preserve_request=True)
+
+            err_msg = "User not found"
 
     return render(request, ERROR_TEMPLATE, context={"message": err_msg})
 
@@ -62,10 +68,16 @@ def _is_authenticated(request: HttpRequest):
 def _create_user(data: dict):
     username=data.get("username")
     password=data.get("password")
-    user: BaseUserModel = BaseUserModel.objects.create(username)
+    user: BaseUserModel = BaseUserModel.objects.create(username=username)
     user.set_password(password)
 
-    NON_UPDATABLE_ATTRS=['username', 'password', 'is_active', 'is_superuser']
+    NON_UPDATABLE_ATTRS=[
+        'username', 
+        'password', 
+        'is_active', 
+        'is_superuser',
+        ''
+    ]
     for attr, val in data.items():
         if attr in NON_UPDATABLE_ATTRS:
             continue

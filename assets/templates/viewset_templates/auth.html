@@ -203,6 +203,7 @@
             {% csrf_token %}
             {{ form.as_table }}
 
+            <!-- <input type="hiddem" name="mode" value="login"> -->
             <button type="submit" id="submit-button">Login</button>
         </form>
 
@@ -215,8 +216,9 @@
     <script>
         let currentMode = "{{ mode }}";
 
-        async function fetchAuthForm(url) {
+        async function fetchAuthForm(newMode) {
             try{
+                url = `?mode=${newMode}`
                 const response = await fetch(
                     url, 
                     { 
@@ -243,7 +245,7 @@
             const formContainer = document.getElementById('auth-form').parentElement;
             
             currentMode = (currentMode ==="login" ? "register": "login");
-            await fetchAuthForm(`?mode=${currentMode}`);
+            await fetchAuthForm(currentMode);
 
             const formTitle = document.getElementById('form-title');
             const pageTitle = document.getElementById('page-title');
@@ -261,6 +263,14 @@
                 innerToggleText.innerHTML = "Register";
             }
         }
+        // Append current mode before submit
+        document.getElementById("auth-form").addEventListener('submit', function (e) {
+            const modeField = document.createElement('input');
+            modeField.type = 'hidden';
+            modeField.name = 'mode';
+            modeField.value = currentMode;
+            this.appendChild(modeField)
+        })
     </script>
 
 </body>

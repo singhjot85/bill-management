@@ -3,7 +3,7 @@ from bma.core.constants import CountryCodeChoices, SuffixChoices
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-class BaseCustomerForm(forms.Form):
+class LoginForm(forms.Form):
     username = forms.CharField(
         label="Username", 
         widget=forms.TextInput(attrs={
@@ -24,6 +24,9 @@ class BaseCustomerForm(forms.Form):
         max_length=150, 
         min_length=8
     )
+
+
+class RegistrationForm(LoginForm):
     confirmed_password = forms.CharField(
         label="Confirm Password", 
         widget=forms.TextInput(attrs={
@@ -35,15 +38,6 @@ class BaseCustomerForm(forms.Form):
         min_length=8, 
         show_hidden_initial=True
     )
-
-    def clean(self):
-        cleaned = super().clean()
-        if cleaned.get("password") != cleaned.get("confirmed_password"):
-            err_msg = "Confirmed Password not equal to actual password"
-            self.add_error("confirmed_password", err_msg)
-            raise forms.ValidationError(err_msg)
-
-class CustomerForm(BaseCustomerForm):
     suffix = forms.ChoiceField(
         label="Suffix", 
         widget=forms.Select(attrs={'class': 'ele'}), 
@@ -59,7 +53,6 @@ class CustomerForm(BaseCustomerForm):
         }),
         required=True, 
         max_length=150, 
-        min_length=5
     )
     middle_name = forms.CharField(
         label="Middle Name", 
@@ -69,7 +62,6 @@ class CustomerForm(BaseCustomerForm):
         }),
         required=False, 
         max_length=150, 
-        min_length=5
     )
     last_name = forms.CharField(
         label="Last Name", 
@@ -79,7 +71,6 @@ class CustomerForm(BaseCustomerForm):
         }),
         required=False, 
         max_length=150, 
-        min_length=5
     )
     email = forms.EmailField(
         label="Email",
@@ -103,6 +94,13 @@ class CustomerForm(BaseCustomerForm):
             'placeholder': 'Phone(99999 99999)'
         }),
         required=True, 
-        max_length=150, 
-        min_length=5
+        max_length=20,
+        min_length=10
     )
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("password") != cleaned.get("confirmed_password"):
+            err_msg = "Confirmed Password not equal to actual password"
+            self.add_error("confirmed_password", err_msg)
+            raise forms.ValidationError(err_msg)
