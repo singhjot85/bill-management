@@ -22,12 +22,16 @@ else:
 USE_TZ = True
 USE_I18N = True
 TIME_ZONE = 'UTC'
-STATIC_URL = 'static/'
 LANGUAGE_CODE = 'en-us'
 
-
 ALLOWED_HOSTS = []
+
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR / "static"),
+]
+
+
 ROOT_URLCONF = 'config.routers'
 
 AUTH_USER_MODEL = "core.BaseUserModel"
@@ -53,11 +57,12 @@ DATABASES = {
     }
 }
 
-TEMPLATE_DIR = os.path.join(BASE_DIR, "assets", "templates")
+AUTH_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "core", "templates")
+PAYMENTS_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "payments", "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        "DIRS": [TEMPLATE_DIR],
+        "DIRS": [AUTH_TEMPLATE_DIR, PAYMENTS_TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

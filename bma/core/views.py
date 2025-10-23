@@ -6,12 +6,12 @@ from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 
-AUTH_TEMPLATE = "viewset_templates/auth.html"
-ERROR_TEMPLATE = "viewset_templates/404.html"
+AUTH_TEMPLATE = "auth.html"
+ERROR_TEMPLATE = "error.html"
 AUTH_REDIRECT = "/admin"
 
 def auth_view(request: HttpRequest, *args, **kwargs):
-    err_msg = None
+    err_msg = "Unknown error !!"
 
     if _is_authenticated(request):
         return redirect(to=AUTH_REDIRECT, permanent=True, preserve_request=True)
