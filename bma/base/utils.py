@@ -2,8 +2,12 @@ import jq
 import uuid
 from io import BytesIO
 
+from bma.base.constants import PAYMENTS_TYPE_CHOICE_TO_MODEL_MAP as payment_model_map
+
+from django.apps import apps
 from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.models import ContentType
 
 from weasyprint import HTML
 
@@ -52,3 +56,19 @@ def jq_transform_with_config(input_payload: dict, config: dict, jq_path: str):
         return str(f"Error in jq tranformation [{str(exc)}]")
 
     return output_payload
+
+def get_contenttype_for_payment(payment_mode: str):
+    """
+    Give a payment mode choice and this will return 
+    ContentType for that choice's corresponding model
+    Args:
+        payment_mode (str): Mode of payment from payment mode choices
+    Returns:
+        content_type : Content Type for that model
+        Model : Model of the app
+    """
+    model_name = payment_model_map.get(payment_mode, None)
+    if not model_name:
+        raise Exception("Payment mode not supported yet.")
+    Model = apps.get_model('payments', model_name)
+    return ContentType.objects.get_for_model(Model), Model

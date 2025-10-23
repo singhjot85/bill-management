@@ -76,7 +76,7 @@ body {
     padding: 1rem;
 }
 
-.auth-container {
+.main-container {
     background: var(--container-bg);
     padding: 2rem 1.5rem;
     border-radius: 10px;
@@ -89,7 +89,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.auth-form {
+.main-form {
     padding: 2rem;
     width: 100%;
     max-width: 420px;
@@ -156,7 +156,7 @@ a:hover {
 }
 
 @media (max-width: 600px) {
-    .auth-container {
+    .main-container {
         padding: 1.5rem 1rem;
         box-shadow: none;
         border: 1px solid #ddd;
@@ -177,7 +177,7 @@ a:hover {
         padding: 0.5rem;
     }
 
-    .auth-container {
+    .main-container {
         padding: 1rem;
         border-radius: 6px;
     }

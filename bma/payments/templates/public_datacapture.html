@@ -1,0 +1,87 @@
+{% load static %}
+{% load rest_framework %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Razorpay app ingestion -->
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="icon" type="image/png" href="{% static 'favicons/favicon.png' %}">
+        <title>Data Capture</title>        
+    </head>
+    <body>
+        <div class="main-container">
+            <h2 class="form-title">Please Enter the details</h2>
+            <form class="main-form" id="order-form" >
+                {% render_form order_serializer %}
+            </form>
+            <form class="main-form" id="payment-form" >
+                {% render_form payment_serializer %}
+            </form>
+
+            <button id="bill-button" hidden>Generate Bill</button>
+            </br>
+            <button id="payment-button">Make Payment</button>
+        </div>
+       <script>
+            async function makePublicPaymentsCall(url, data) {
+                try{
+                    const complete_url = url ? `/public/payments/${url}/`: `/public/payments/`; 
+                    const response = await fetch(
+                        complete_url,
+                        {
+                            method: "POST",
+                            headers: { 
+                                "Content-Type": "application/json" ,
+                                "Accept": "application/json"
+                            },
+                            body: data
+                        }
+                    )
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const respJson = await response.json()
+                    return respJson
+
+                } catch(err) {
+                    console.error("Error updating form:", err);
+                    alert(`${url} API failed`);
+                }
+            }
+            document.getElementById("payment-button").addEventListener("click", async function (e) {
+                e.preventDefault();
+                const orderFormData = new FormData(document.getElementById("order-form"));
+                const paymentFormData = new FormData(document.getElementById("payment-form"));
+
+                const userAPIdata = JSON.stringify({
+                    "name": paymentFormData.get("requested_by.name"),
+                    "email": paymentFormData.get("requested_by.email"),
+                    "country_code": paymentFormData.get("requested_by.country_code"),
+                    "phone_number": paymentFormData.get("requested_by.phone_number")
+                });
+                const userAPIResponse = await makePublicPaymentsCall('create_user', userAPIdata)
+
+                const orderAPIdata = JSON.stringify({
+                    "currency": orderFormData.get("currency"),
+                    "amount": orderFormData.get("amount"),
+                    "description": orderFormData.get("description")
+                })
+                const orderAPIResponse = await makePublicPaymentsCall('create_order', orderAPIdata)
+
+                const paymentsAPIdata = JSON.stringify({
+                    "order_id": orderAPIResponse?.id,
+                    "user_id":  userAPIResponse?.id,
+                    "payment_mode": paymentFormData.get("payment_mode")
+                })
+                const order = await makePublicPaymentsCall(null, paymentsAPIdata);
+                if(order){
+                    const rzp = new Razorpay(order);
+                    rzp.open();
+                    document.getElementById('bill-button').hidden = false;
+                }
+            })
+        </script>
+    </body>
+</html>

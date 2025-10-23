@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 
 AUTH_TEMPLATE = "auth.html"
 ERROR_TEMPLATE = "error.html"
-AUTH_REDIRECT = "/admin"
+AUTH_REDIRECT = "/public/payments/"
 
 def auth_view(request: HttpRequest, *args, **kwargs):
     err_msg = "Unknown error !!"

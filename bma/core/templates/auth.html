@@ -9,9 +9,9 @@
     <title id="page-title">Login</title>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="main-container">
         <h2 id="form-title">Login</h2>
-        <form method="post" id="auth-form" class="auth-form">
+        <form method="post" id="auth-form" class="main-form">
             {% csrf_token %}
             {{ form.as_table }}
 

@@ -12,10 +12,12 @@ DEFAULT_AUTO_FIELD = os.getenv('DJANGO_DEFAULT_ID','django.db.models.BigAutoFiel
 LOCAL_ENVS = ['local','dev','devlopment']
 if os.getenv('DJANGO_ENV', 'devlopment') in LOCAL_ENVS:
     DEBUG = True
+    ALLOWED_HOSTS = []
     WSGI_APPLICATION = 'config.wsgi.application'
 else:
-    # TODO: Write WSGI configuration for production
+    # TODO: Write WSGI and  ALLOWED_HOSTS configuration for production
     DEBUG = False
+    ALLOWED_HOSTS = [ ]
     WSGI_APPLICATION = ''
 
 
@@ -23,8 +25,6 @@ USE_TZ = True
 USE_I18N = True
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
-
-ALLOWED_HOSTS = []
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
