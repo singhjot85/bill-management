@@ -55,3 +55,13 @@ class CardlessEMIProviderChoices(TextChoices):
     KKKBK = "kkbk", _("Kotak Bank")
     FIBE = "earlysalary", _("Fibe")
     ZESTMONEY = "zestmoney", _("ZestMoney")
+
+PAYMENTS_TYPE_CHOICE_TO_MODEL_MAP = {
+    "upi": 'UPIDetails',
+    "emi": 'EMIDetails',
+    "card": 'CardDetails',
+    "wallet": 'WalletDetails',
+    "paylater": 'PayLaterDetails',
+    "cardless_emi": 'CardlessEMIDetails',
+    "netbanking": 'InternetBankingDetails'
+}

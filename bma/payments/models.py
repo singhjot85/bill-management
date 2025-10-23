@@ -8,10 +8,10 @@ from bma.base.constants import (
     CardNetworkChoices,
     CardlessEMIProviderChoices
 )
-from bma.core.models import BaseModel, BaseUserModel
+from bma.core.models import BaseModel
+from bma.core.models import CountryCodeChoices
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -34,6 +34,18 @@ class Order(BaseModel):
     responses = models.JSONField(verbose_name="Order API responses", blank=True, default=dict, encoder=DjangoJSONEncoder)
     details = models.JSONField(blank=True, default=dict, encoder=DjangoJSONEncoder)
 
+class Customer(BaseModel):
+    # TODO: Improve this model over time
+    name = models.CharField(verbose_name="Name", max_length=150, null=False, blank=False)
+    email = models.EmailField(verbose_name="Email")
+    country_code = models.CharField(verbose_name="Contact Country Code", default=CountryCodeChoices.INDIA, choices=CountryCodeChoices)
+    phone_number = models.CharField(verbose_name="Contact Number", null=False, blank=False)
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.strip()
+        self.phone_number = self.phone_number.replace(" ", "").replace("-", "").strip()
+        self.name = ' '.join(self.name.split()).strip()
+        super().save(*args, **kwargs)
 
 class Payment(BaseModel):
 
@@ -47,7 +59,7 @@ class Payment(BaseModel):
     )
     requested_by = models.ForeignKey(
         verbose_name="Requested by", 
-        to=BaseUserModel, 
+        to=Customer, 
         on_delete=models.CASCADE, 
         default=None, 
         null=True, 
@@ -62,7 +74,7 @@ class Payment(BaseModel):
         related_name="payments"
     )
     
-    payment_mode = models.CharField(verbose_name="Mode of paymen", default=PaymentModeChoices.UPI, choices=PaymentModeChoices)
+    payment_mode = models.CharField(verbose_name="Mode of payment", default=PaymentModeChoices.UPI, choices=PaymentModeChoices)
 
     content_type = models.ForeignKey(verbose_name="Content Type", to='contenttypes.ContentType', on_delete=models.CASCADE, null=True, blank=True, related_name="paymentmodes" )
     object_id = models.UUIDField(verbose_name="Object Id")
@@ -73,9 +85,6 @@ class Payment(BaseModel):
 
     # TODO: partial payments mechanism
     is_partial_payment = models.BooleanField(verbose_name="Is Partial Payment", null=True, blank=True)
-
-    def save(self):
-        super().save()
 
 class OrderInterfaces(BaseModel):
     is_valid = models.BooleanField(null=False, blank=False, default=True)
@@ -123,3 +132,6 @@ class WalletDetails(BaseModel):
 class PayLaterDetails(BaseModel):
     provider = models.CharField(verbose_name="Pay Later Provider", null=False, blank=False)
     details = models.JSONField(verbose_name="Pay Later Details", default=dict, encoder=DjangoJSONEncoder)
+
+class UPIDetails(BaseModel):
+    upi_provider = models.CharField(verbose_name="UPI service provider")
