@@ -59,10 +59,11 @@ DATABASES = {
 
 AUTH_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "core", "templates")
 PAYMENTS_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "payments", "templates")
+REQUESTS_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "requests", "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        "DIRS": [AUTH_TEMPLATE_DIR, PAYMENTS_TEMPLATE_DIR],
+        "DIRS": [AUTH_TEMPLATE_DIR, PAYMENTS_TEMPLATE_DIR, REQUESTS_TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

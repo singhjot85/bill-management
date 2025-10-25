@@ -5,27 +5,55 @@ from io import BytesIO
 from bma.base.constants import PAYMENTS_TYPE_CHOICE_TO_MODEL_MAP as payment_model_map
 
 from django.apps import apps
-from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
+from django.http.response import HttpResponse
+from django.shortcuts import render
+from django.template.loader import get_template, render_to_string
+
+from xhtml2pdf import pisa
 
 from weasyprint import HTML
 
 """
-brew install cairo pango gdk-pixbuf libffi
+dependencies for weasyprint:
+    brew install cairo pango gdk-pixbuf libffi
+dependencies for xhtml2pdf:
+    brew install cairo pkg-config
 """
 
-def render_to_pdf(template: str, data: dict) -> BytesIO:
-    """This method will be used to render PDF 
-    from a given html template string and data.
+def add_rendered_pdf_to_response(
+    template: str, 
+    data: dict, 
+    response: HttpResponse,
+    enhanced_styling: bool = True
+) -> HttpResponse:
     """
+    Args:
+        template (str): Template name
+        data (dict): Context for 
+    """
+    if enhanced_styling:
+        complete_template = render_to_string(template, context=data)
 
-    complete_template = render_to_string(template, context={"invoice": data} )
+        pdf_buffer = BytesIO()
+        parser = HTML(string=complete_template)
+        parser.write_pdf(pdf_buffer)
 
-    pdf_file = BytesIO()
-    HTML(string=complete_template).write_pdf(pdf_file)
+        pdf_buffer.seek(0) # Move head to start
+        response = HttpResponse(content=pdf_buffer.getvalue(), content_type = 'application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice.pdf"'
+        return response
 
-    return pdf_file
+    template = get_template(template)
+    html = template.render(data)
+
+    response = HttpResponse(content_type='application/pdf', status=200)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse(content='We had some errors <pre>' + html + '</pre>', status=500)
+    response['Content-Disposition'] = 'inline; filename="invoice.pdf"'
+    return response
 
 def generate_random_uuid():
     return uuid.uuid5(uuid.NAMESPACE_DNS, str(uuid.uuid4()))

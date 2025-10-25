@@ -41,7 +41,7 @@ class ExternalOrderSerializer(serializers.ModelSerializer):
         fields = [
             "currency",
             "amount",
-            "description"   
+            "description",
         ]
 
 
@@ -52,7 +52,7 @@ class ExternalCustomerSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "country_code",
-            "phone_number"
+            "phone_number",
         ]
 
 
@@ -63,7 +63,7 @@ class ExternalPaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = [
             "payment_mode",
-            "requested_by"
+            "requested_by",
         ]
 
     # def validate(self, attrs):
