@@ -12,22 +12,26 @@ DEFAULT_AUTO_FIELD = os.getenv('DJANGO_DEFAULT_ID','django.db.models.BigAutoFiel
 LOCAL_ENVS = ['local','dev','devlopment']
 if os.getenv('DJANGO_ENV', 'devlopment') in LOCAL_ENVS:
     DEBUG = True
+    ALLOWED_HOSTS = []
     WSGI_APPLICATION = 'config.wsgi.application'
 else:
-    # TODO: Write WSGI configuration for production
+    # TODO: Write WSGI and  ALLOWED_HOSTS configuration for production
     DEBUG = False
+    ALLOWED_HOSTS = [ ]
     WSGI_APPLICATION = ''
 
 
 USE_TZ = True
 USE_I18N = True
 TIME_ZONE = 'UTC'
-STATIC_URL = 'static/'
 LANGUAGE_CODE = 'en-us'
 
-
-ALLOWED_HOSTS = []
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR / "static"),
+]
+
+
 ROOT_URLCONF = 'config.routers'
 
 AUTH_USER_MODEL = "core.BaseUserModel"
@@ -53,11 +57,13 @@ DATABASES = {
     }
 }
 
-TEMPLATE_DIR = os.path.join(BASE_DIR, "assets", "templates")
+AUTH_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "core", "templates")
+PAYMENTS_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "payments", "templates")
+REQUESTS_TEMPLATE_DIR = os.path.join(BASE_DIR, "bma", "requests", "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        "DIRS": [TEMPLATE_DIR],
+        "DIRS": [AUTH_TEMPLATE_DIR, PAYMENTS_TEMPLATE_DIR, REQUESTS_TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

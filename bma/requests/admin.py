@@ -1,9 +1,6 @@
-from django.contrib import admin, messages
-from django.http import HttpResponse
+from django.contrib import admin
 
 from bma.requests.models import Bill
-from bma.base.utils import render_to_pdf
-from bma.requests.serializers import BillSerializer
 
 DEFAULT_TEMPLATE_PATH=r'test_invoice.html'
 
@@ -34,27 +31,27 @@ DEFAULT_TEMPLATE_PATH=r'test_invoice.html'
         
 #     return response
         
-@admin.action(description="Download Single Bills as a PDF file")
-def download_pdf(modeladmin, request, queryset):
+# @admin.action(description="Download Single Bills as a PDF file")
+# def download_pdf(modeladmin, request, queryset):
     
-    if len(queryset) > 1:
-        messages.error(request, "ERROR - Mutliple objects selcted !!")
-    if len(queryset) < 1:
-        messages.error(request, "ERROR - No objects selcted !!")
+#     if len(queryset) > 1:
+#         messages.error(request, "ERROR - Mutliple objects selcted !!")
+#     if len(queryset) < 1:
+#         messages.error(request, "ERROR - No objects selcted !!")
     
-    obj = queryset.first()
-    serialized_data = BillSerializer(obj)
+#     obj = queryset.first()
+#     serialized_data = BillSerializer(obj)
 
-    if serialized_data.is_valid:
-        template_path = DEFAULT_TEMPLATE_PATH
-        pdf_buffer = render_to_pdf(template_path, serialized_data.data)
-        pdf_buffer.seek(0)
-        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{serialized_data.field_name}.pdf"'
-        return response
-    else:
-        error_msg = str(serialized_data.errors)
-        messages.error(request, f"ERROR - Bill is invalid {error_msg}")
+#     if serialized_data.is_valid:
+#         template_path = DEFAULT_TEMPLATE_PATH
+#         pdf_buffer = render_to_pdf(template_path, serialized_data.data)
+#         pdf_buffer.seek(0)
+#         response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+#         response['Content-Disposition'] = f'attachment; filename="{serialized_data.field_name}.pdf"'
+#         return response
+#     else:
+#         error_msg = str(serialized_data.errors)
+#         messages.error(request, f"ERROR - Bill is invalid {error_msg}")
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
@@ -62,7 +59,7 @@ class BillAdmin(admin.ModelAdmin):
     list_filter = ["state", "currency"]
     search_fields = ("name", "state", 'total_amount')
     actions = [
-        download_pdf,
+        # download_pdf,
         # download_pdf_zip
     ]
 

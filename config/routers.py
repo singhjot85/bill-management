@@ -1,4 +1,5 @@
 from bma.requests.views import BillViewSet
+from bma.payments.views import PublicPaymentAPI
 
 from django.contrib import admin
 from django.conf import settings
@@ -10,7 +11,8 @@ router = SimpleRouter()
 if settings.DEBUG:
     router = DefaultRouter()
 
-router.register(r'bill', BillViewSet, basename='bill')
+# router.register(r'bill', BillViewSet, basename='bill')
+router.register(r'public/payments', PublicPaymentAPI, basename='public-payments')
 
 urlpatterns = [
     path("", include('bma.core.urls')),
