@@ -5,23 +5,24 @@ from django.utils.translation import gettext_lazy as _
 
 from bma.payments.client import RazorPayClient
 from bma.payments.models import (
-    Order,
-    Payment,
-    OrderInterfaces,
     CardDetails,
-    InternetBankingDetails,
-    EMIDetails,
     CardlessEMIDetails,
+    EMIDetails,
+    InternetBankingDetails,
+    Order,
+    OrderInterfaces,
+    PayLaterDetails,
+    Payment,
     WalletDetails,
-    PayLaterDetails
 )
+
 
 @admin.action(description="Generate orders")
 def generate_multiple_order_id(modeladmin, request, queryset):
 
     if len(queryset) < 1:
         messages.error(request, "ERROR - No objects selcted !!")
-    
+
     try:
         for obj in queryset:
             client = RazorPayClient(obj)
@@ -32,21 +33,31 @@ def generate_multiple_order_id(modeladmin, request, queryset):
         error_msg = str(exc)
         messages.error(request, f"ERROR occurred generating order {error_msg}")
 
+
 class PaymentInline(admin.TabularInline):
     """
     Inline payments section within the Order detail page
     """
+
     model = Payment
     extra = 0
     fields = ("id", "payment_state", "payment_mode", "external_payment_id", "created")
-    readonly_fields = ("id", "payment_state", "payment_mode", "external_payment_id", "created")
+    readonly_fields = (
+        "id",
+        "payment_state",
+        "payment_mode",
+        "external_payment_id",
+        "created",
+    )
     can_delete = False
     show_change_link = True
+
 
 class OrderInterfacesInline(admin.TabularInline):
     """
     Inline order interfaces section within the Order detail page
     """
+
     model = OrderInterfaces
     extra = 0
     fields = ("interface_type", "is_valid", "created")
@@ -60,6 +71,7 @@ class OrderAdmin(admin.ModelAdmin):
     """
     Detailed admin view for Order model
     """
+
     list_display = (
         "id",
         "order_state",
@@ -93,19 +105,16 @@ class OrderAdmin(admin.ModelAdmin):
 
     # organize the edit form in sections
     fieldsets = (
-        (_("Basic Info"), {
-            "fields": ("currency", "amount", "description")
-        }),
-        (_("External Identifiers"), {
-            "fields": ("external_reciept_number", "exteranal_order_id")
-        }),
-        (_("JSON Data"), {
-            "classes": ("collapse",),
-            "fields": ("responses", "details")
-        }),
-        (_("Timestamps"), {
-            "fields": ("created", "modified")
-        }),
+        (_("Basic Info"), {"fields": ("currency", "amount", "description")}),
+        (
+            _("External Identifiers"),
+            {"fields": ("external_reciept_number", "exteranal_order_id")},
+        ),
+        (
+            _("JSON Data"),
+            {"classes": ("collapse",), "fields": ("responses", "details")},
+        ),
+        (_("Timestamps"), {"fields": ("created", "modified")}),
     )
 
     def display_amount(self, obj: Order):
@@ -113,6 +122,7 @@ class OrderAdmin(admin.ModelAdmin):
         Show amount with currency in list display.
         """
         return format_html("<b>{} {}</b>", obj.currency, obj.amount)
+
     display_amount.short_description = "Amount"
 
     def has_delete_permission(self, request, obj: Order = None):
@@ -129,16 +139,12 @@ class OrderAdmin(admin.ModelAdmin):
         return qs.prefetch_related("payments")
 
 
-from django.contrib import admin
-from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
-from .models import Payment
-
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     """
     Detailed admin for Payment model
     """
+
     list_display = (
         "id",
         "payment_state",
@@ -175,22 +181,21 @@ class PaymentAdmin(admin.ModelAdmin):
     ordering = ("-created",)
 
     fieldsets = (
-        (_("Basic Info"), {
-            "fields": [ "id", "payment_mode", "is_partial_payment", "external_payment_id" ]
-        }),
-        (_("Payment Method link"), {
-            "fields": [ "content_type", "object_id" ]
-        }),
-        (_("Foreign Links"), {
-            "fields": [ "requested_by", "order" ]
-        }),
-        (_("Payment Details"), {
-            "classes": ("collapse",),
-            "fields": ["details"]
-        }),
-        (_("Timestamps"), {
-            "fields": ["created", "modified"]
-        }),
+        (
+            _("Basic Info"),
+            {
+                "fields": [
+                    "id",
+                    "payment_mode",
+                    "is_partial_payment",
+                    "external_payment_id",
+                ]
+            },
+        ),
+        (_("Payment Method link"), {"fields": ["content_type", "object_id"]}),
+        (_("Foreign Links"), {"fields": ["requested_by", "order"]}),
+        (_("Payment Details"), {"classes": ("collapse",), "fields": ["details"]}),
+        (_("Timestamps"), {"fields": ["created", "modified"]}),
     )
 
     def display_order(self, obj):
@@ -199,11 +204,12 @@ class PaymentAdmin(admin.ModelAdmin):
             return format_html(
                 '<a href="/admin/payments/order/{}/change/">{}</a>',
                 obj.order_id,
-                obj.order_id
+                obj.order_id,
             )
         return "-"
+
     display_order.short_description = "Order"
-    
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
             kwargs["queryset"] = ContentType.objects.filter(
@@ -223,7 +229,6 @@ class PaymentAdmin(admin.ModelAdmin):
         """
         qs = super().get_queryset(request)
         return qs.select_related("order", "requested_by", "content_type")
-
 
 
 @admin.register(OrderInterfaces)

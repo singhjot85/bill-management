@@ -1,12 +1,15 @@
-from bma.requests.models import Bill
-from rest_framework import serializers
 from datetime import date
-from bma.base.utils import generate_random_uuid
+
+from rest_framework import serializers
+
+from bma.requests.models import Bill
+from bma.utils import generate_random_uuid
+
 
 class BillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bill
-        fields = '__all__'
+        fields = "__all__"
 
 
 class PublicBillSerializer(serializers.Serializer):

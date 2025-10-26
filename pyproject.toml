@@ -25,3 +25,20 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 120
+force-exclude = """
+/(
+  | migrations
+  | venv
+  | stgcore-app-ulp
+  | los/db_migrations
+)/
+"""
+
+[tool.isort]
+profile = "black"
+atomic = true
+skip_glob = ["*/migrations/*"]

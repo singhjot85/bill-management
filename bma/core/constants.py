@@ -3,8 +3,6 @@ from enum import Enum
 from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
-from django.db.models import TextChoices
-from django.utils.translation import gettext_lazy as _
 
 class CountryCodeChoices(TextChoices):
     INDIA = "+91", _("India (+91)")
@@ -22,6 +20,7 @@ class CountryCodeChoices(TextChoices):
     BRAZIL = "+55", _("Brazil (+55)")
     MEXICO = "+52", _("Mexico (+52)")
 
+
 class SuffixChoices(TextChoices):
     MR = "Mr.", _("Mister Mr.")
     MRS = "Mrs.", _("Missus Mrs.")
@@ -32,6 +31,7 @@ class SuffixChoices(TextChoices):
     SIR = "Sir", _("Sir")
     MADAM = "Madam", _("Madam")
     SR = "Sr.", _("Sardar Sr.")
+
 
 class APIRequestMethods(Enum):
     GET = "GET"

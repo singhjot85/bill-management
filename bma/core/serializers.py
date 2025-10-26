@@ -1,15 +1,21 @@
 from rest_framework import serializers
 
-from bma.core.models import BaseUserModel
+from bma.core.models import BaseUserModel, Customer
+
 
 class BaseUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BaseUserModel
+        fields = ["id", "username", "email", "country_code", "phonenumber"]
+
+
+class PublicCustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
         fields = [
-            "id",
-            "username",
+            "name",
             "email",
             "country_code",
-            "phonenumber"
+            "phone_number",
         ]
