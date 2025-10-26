@@ -7,7 +7,7 @@
         notes: {
             description: .description,
             time_stamp: now
-        }            
+        }
     }
 )
 +
@@ -15,8 +15,8 @@
     if (.third_party_validation == true)
         then ({
                 method: (.payments[0].payment_mode // null),
-        }) 
-        + 
+        })
+        +
         (
             if .payments[0].payment_mode == "netbanking"
                 then ({

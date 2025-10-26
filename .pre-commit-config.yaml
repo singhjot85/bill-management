@@ -1,0 +1,56 @@
+exclude: "docs|node_modules|.git"
+default_stages: [pre-commit, pre-push]
+fail_fast: true
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: ["--target-version", "py311"]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: mixed-line-ending
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.2.0
+    hooks:
+      - id: flake8
+        args: ["--ignore=E501,W503,F403,F405,E203"]
+        exclude: init_local.py
+        additional_dependencies: [flake8-isort, flake8-print]
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/yunojuno/pre-commit-xenon
+    rev: v0.1
+    hooks:
+      - id: xenon
+        exclude: scripts/
+        args: ["--max-average=C", "--max-modules=C", "--max-absolute=F"]
+
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django
+        exclude: |
+          ^bma/requests/templates/basic_bill\.html|
+          ^bma/payments/templates/public_datacapture\.html|
+          ^bma/core/templates/auth\.html|
+          ^bma/core/templates/error\.html

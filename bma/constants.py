@@ -1,6 +1,7 @@
 from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
+
 class OrderInterfaceChoices(TextChoices):
 
     CREATE_PAYMENT = "create-payment", _("Create a payment")
@@ -17,16 +18,19 @@ class OrderStateChoices(TextChoices):
     ATTEMPTED = "attempted", _("Attempted/ Under - processing")
     PAID = "paid", _("Paid")
 
+
 class PaymentStateChoices(TextChoices):
     CREATED = "created", _("Created")
     AUTHORIZED = "authorized", _("Authorized")
     FAILED = "failed", _("Authorized but Failed")
     CAPTURED = "captured", _("Captured")
 
+
 class CurrencyChoices(TextChoices):
     INR = "INR", _("Indian National Rupee")
     USD = "USD", _("United State Dollar")
     YEN = "YEN", _("Chinese Yen")
+
 
 class PaymentModeChoices(TextChoices):
     UPI = "upi", _("UPI")
@@ -39,13 +43,14 @@ class PaymentModeChoices(TextChoices):
 
 
 class CardNetworkChoices(TextChoices):
-    VISA="visa", _("Visa")
-    BAJAJ="bajaj", _("Bajaj")
-    RUPAY="rupay", _("Rupay")
-    DINERS="diners", _("Diners")
-    MAESTRO="maestro", _("Maestro")
-    AMEX="amex", _("American Express")
-    MASTERCARD="mastercard", _("Mastercard")    
+    VISA = "visa", _("Visa")
+    BAJAJ = "bajaj", _("Bajaj")
+    RUPAY = "rupay", _("Rupay")
+    DINERS = "diners", _("Diners")
+    MAESTRO = "maestro", _("Maestro")
+    AMEX = "amex", _("American Express")
+    MASTERCARD = "mastercard", _("Mastercard")
+
 
 class CardlessEMIProviderChoices(TextChoices):
     IDFB = "idfb", _("IDFC Bank")
@@ -56,12 +61,13 @@ class CardlessEMIProviderChoices(TextChoices):
     FIBE = "earlysalary", _("Fibe")
     ZESTMONEY = "zestmoney", _("ZestMoney")
 
+
 PAYMENTS_TYPE_CHOICE_TO_MODEL_MAP = {
-    "upi": 'UPIDetails',
-    "emi": 'EMIDetails',
-    "card": 'CardDetails',
-    "wallet": 'WalletDetails',
-    "paylater": 'PayLaterDetails',
-    "cardless_emi": 'CardlessEMIDetails',
-    "netbanking": 'InternetBankingDetails'
+    "upi": "UPIDetails",
+    "emi": "EMIDetails",
+    "card": "CardDetails",
+    "wallet": "WalletDetails",
+    "paylater": "PayLaterDetails",
+    "cardless_emi": "CardlessEMIDetails",
+    "netbanking": "InternetBankingDetails",
 }
